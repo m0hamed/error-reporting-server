@@ -147,6 +147,9 @@ class Incident extends AppModel {
  * @return Boolean If the report/incident was correctly saved
  */
 	public function createIncidentFromBugReport($bugReport) {
+		if ($bugReport == null) {
+			return false;
+		}
 		$schematizedIncident = $this->_getSchematizedIncident($bugReport);
 		$closestReport = $this->_getClosestReport($bugReport);
 
@@ -292,10 +295,17 @@ class Incident extends AppModel {
 		 * previous code makes sure that the $versionLength variable is a positive
 		 * int
 		 */
-		preg_match("/^(\d+\.){" . ($versionLength - 1) . "}\d+/", $versionString,
-				$matches);
-		$simpleVersion = $matches[0];
-		return $simpleVersion;
+		$result = preg_match(
+			"/^(\d+\.){" . ($versionLength - 1) . "}\d+/",
+			$versionString,
+			$matches
+		);
+		if ($result) {
+			$simpleVersion = $matches[0];
+			return $simpleVersion;
+		} else {
+			return $versionString;
+		}
 	}
 
 /**

@@ -4,17 +4,9 @@ class ReportsControllerTest extends ControllerTestCase {
 	public $fixtures = array('app.report', 'app.incident', 'app.developer');
 
 	public function setUp() {
-		PHPUnit_Framework_Error_Warning::$enabled = FALSE;
-		PHPUnit_Framework_Error_Notice::$enabled = FALSE;
-		$this->Reports = $this->generate('Reports', array(
-			'components' => array(
-				'Session',
-			)
-    ));
-		$this->Reports->Session
-        ->expects($this->any())
-        ->method('read')
-				->will($this->returnValue(1));
+		$this->Reports = $this->generate('Reports');
+		$Session = new SessionComponent(new ComponentCollection());
+		$Session->write("Developer.id", 1);
 	}
 
 	public function testIndex() {
@@ -32,7 +24,7 @@ class ReportsControllerTest extends ControllerTestCase {
 		$result = $this->testAction('/reports/view/1', array(
 			'return' => 'vars'
 		));
-		
+
 		$this->assertEquals(1, $this->vars['report']['Report']['id']);
 		$this->assertEquals('error2', $this->vars['report']['Report']['error_name']);
 
